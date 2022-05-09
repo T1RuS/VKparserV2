@@ -9,6 +9,7 @@ try:
     driver.get(url=URL)
     first_process = ThreadsSaveData(news)
     first_process.start_threads()
+    print(threading.enumerate())
 
     threads_dict = {
         '0': first_process.start_save_urls,
@@ -31,6 +32,9 @@ try:
                     threads_dict[str(i)]()
 
         count += 1
+        print('Обновление страницы.')
+        driver.refresh()
+        print(threading.enumerate())
 
 except Exception as ex:
     print(ex)

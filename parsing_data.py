@@ -53,5 +53,3 @@ def get_data() -> list:
 
     except Exception as ex:
         print(ex)
-
-    driver.refresh()

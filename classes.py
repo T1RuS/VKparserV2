@@ -88,31 +88,19 @@ class ThreadsSaveData(GetData):
         self.__text_thread.start()
         self.__read_thread.start()
 
-    def __start_to_save_file_urls(self) -> None:
+    def start_save_urls(self) -> None:
         with self.__urls_thread_cond:
             self.__urls_thread_cond.notify()
 
-    def __start_to_save_file_photos(self) -> None:
+    def start_save_photos(self) -> None:
         with self.__photos_thread_cond:
             self.__photos_thread_cond.notify()
 
-    def __start_to_save_file_text(self) -> None:
+    def start_save_text(self) -> None:
         with self.__text_thread_cond:
             self.__text_thread_cond.notify()
 
-    def __start_read_file(self, file_name: str) -> None:
+    def start_read(self, file_name: str) -> None:
         self.file_name = file_name
         with self.__read_thread_cond:
             self.__read_thread_cond.notify()
-
-    def start_save_urls(self) -> None:
-        Thread(target=self.__start_to_save_file_urls).start()
-
-    def start_save_photos(self) -> None:
-        Thread(target=self.__start_to_save_file_photos).start()
-
-    def start_save_text(self) -> None:
-        Thread(target=self.__start_to_save_file_text).start()
-
-    def start_read(self, file_name: str) -> None:
-        Thread(target=self.__start_read_file, args=(file_name,)).start()
