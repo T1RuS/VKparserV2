@@ -1,12 +1,17 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-from classes import Feed
+from models import Feed
+from settings import BROWSER_DATA_PATH, DRIVER_PATH, URL
 
 news: list = []
 
+options = webdriver.ChromeOptions()
+options.add_argument(BROWSER_DATA_PATH)
+driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=options)
 
-def get_data(driver: webdriver) -> list:
+
+def get_data() -> list:
     global news
     try:
         elements: webdriver = driver.find_elements(By.CLASS_NAME, "feed_row ")
@@ -49,4 +54,4 @@ def get_data(driver: webdriver) -> list:
     except Exception as ex:
         print(ex)
 
-    return news
+    driver.refresh()

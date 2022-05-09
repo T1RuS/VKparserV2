@@ -5,3 +5,9 @@ URL = "https://vk.com/feed"
 URLS_FILE = 'data_urls.json'
 PHOTOS_FILE = 'data_photos.json'
 TEXT_FILE = 'data_text.json'
+
+DICT_FILES = {
+    '1': URLS_FILE,
+    '2': PHOTOS_FILE,
+    '3': TEXT_FILE,
+}
