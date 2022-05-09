@@ -2,6 +2,7 @@ from classes import ThreadsSaveData
 from parsing_data import get_data, driver, news
 from settings import URL, DICT_FILES
 
+import threading
 
 count: int = 0
 try:
@@ -19,11 +20,15 @@ try:
     while True:
         get_data()
         index: int = count % 4
-        for i in range(3):
-            if index == i and index != 0:
-                threads_dict['4'](DICT_FILES[str(i)])
-            else:
+        if index == 0:
+            for i in range(3):
                 threads_dict[str(i)]()
+        else:
+            for i in range(3):
+                if i == index - 1:
+                    first_process.start_read(DICT_FILES[str(i+1)])
+                else:
+                    threads_dict[str(i)]()
 
         count += 1
 
