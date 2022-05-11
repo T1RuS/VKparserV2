@@ -21,51 +21,63 @@ class GetData:
 
 
 class ThreadsSaveData(GetData):
-    def __urls_save_to_file(self) -> None:
+    def _urls_save_to_file(self, data: dict) -> None:
+        with self.__urls_thread_lock:
+            print('Сохранение в файл data_urls.json')
+            with open(URLS_FILE, 'w', encoding='utf-8') as outfile:
+                json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+    def _photos_save_to_file(self, data: dict) -> None:
+        with self.__photos_thread_lock:
+            print('Сохранение в файл data_photos.json')
+            with open(PHOTOS_FILE, 'w', encoding='utf-8') as outfile:
+                json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+    def _text_save_to_file(self, data: dict) -> None:
+        with self.__text_thread_lock:
+            print('Сохранение в файл data_text.json')
+            with open(TEXT_FILE, 'w', encoding='utf-8') as outfile:
+                json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+    def _read_file(self, file: str) -> None:
+        with self.__read_thread_lock:
+            with open(file, 'r', encoding='utf-8') as outfile:
+                print(f'Файл прочитан: {file}.')
+
+    def __urls_thread_func(self) -> None:
         print('Поток на запись в data_urls.json запущен.')
         while True:
             with self.__urls_thread_cond:
                 self.__urls_thread_cond.wait()
-                with self.__urls_thread_lock:
-                    print('Сохранение в файл data_urls.json')
-                    with open(URLS_FILE, 'w', encoding='utf-8') as outfile:
-                        json.dump(self._cleaned_data('url'), outfile, indent=4, ensure_ascii=False)
+                self._urls_save_to_file(self._cleaned_data('url'))
 
-    def __photos_save_to_file(self) -> None:
+    def __photos_thread_func(self) -> None:
         print('Поток на запись в data_photos.json запущен.')
         while True:
             with self.__photos_thread_cond:
                 self.__photos_thread_cond.wait()
-                with self.__photos_thread_lock:
-                    print('Сохранение в файл data_photos.json')
-                    with open(PHOTOS_FILE, 'w', encoding='utf-8') as outfile:
-                        json.dump(self._cleaned_data('photo'), outfile, indent=4, ensure_ascii=False)
+                self._photos_save_to_file(self._cleaned_data('photo'))
 
-    def __text_save_to_file(self) -> None:
+    def __text_thread_func(self) -> None:
         print('Поток на запись в data_text.json запущен.')
         while True:
             with self.__text_thread_cond:
                 self.__text_thread_cond.wait()
-                with self.__text_thread_lock:
-                    print('Сохранение в файл data_text.json')
-                    with open(TEXT_FILE, 'w', encoding='utf-8') as outfile:
-                        json.dump(self._cleaned_data('text'), outfile, indent=4, ensure_ascii=False)
+                self._text_save_to_file(self._cleaned_data('text'))
 
-    def __read_file(self) -> None:
+    def __read_thread_func(self) -> None:
         print('Поток на чтение запущен.')
         while True:
             with self.__read_thread_cond:
                 self.__read_thread_cond.wait()
-                with self.__read_thread_lock:
-                    with open(self.file_name, 'r', encoding='utf-8') as outfile:
-                        print(f'Файл прочитан: {self.file_name}.')
+                self._read_file(self.file_name)
 
     def __init__(self, news_data: list) -> None:
         super().__init__(news_data)
-        self.__urls_thread: Thread = Thread(target=self.__urls_save_to_file)
-        self.__photos_thead: Thread = Thread(target=self.__photos_save_to_file)
-        self.__text_thread: Thread = Thread(target=self.__text_save_to_file)
-        self.__read_thread: Thread = Thread(target=self.__read_file)
+        self.__urls_thread: Thread = Thread(target=self.__urls_thread_func)
+        self.__photos_thead: Thread = Thread(target=self.__photos_thread_func)
+        self.__text_thread: Thread = Thread(target=self.__text_thread_func)
+        self.__read_thread: Thread = Thread(target=self.__read_thread_func)
 
         self.__urls_thread_lock: Lock = Lock()
         self.__photos_thread_lock: Lock = Lock()
