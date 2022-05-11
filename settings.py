@@ -11,3 +11,6 @@ DICT_FILES = {
     '2': PHOTOS_FILE,
     '3': TEXT_FILE,
 }
+
+NAME_INDICATOR = 'indicator'
+

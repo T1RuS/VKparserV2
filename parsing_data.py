@@ -2,9 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from models import Feed
-from settings import BROWSER_DATA_PATH, DRIVER_PATH, URL
+from settings import BROWSER_DATA_PATH, DRIVER_PATH
 
-news: list = []
 
 options = webdriver.ChromeOptions()
 options.add_argument(BROWSER_DATA_PATH)
@@ -12,7 +11,8 @@ driver = webdriver.Chrome(executable_path=DRIVER_PATH, options=options)
 
 
 def get_data() -> list:
-    global news
+    news: list = []
+
     try:
         elements: webdriver = driver.find_elements(By.CLASS_NAME, "feed_row ")
 
@@ -31,7 +31,7 @@ def get_data() -> list:
                     imgs = elements[i].find_element(By.CLASS_NAME, "wall_text").find_elements(By.TAG_NAME, "a")
 
                     photos: list = []
-                    x = 0
+                    x: int = 0
                     for img in imgs:
                         if img.get_attribute("aria-label") == "фотография":
                             x = 1
@@ -40,7 +40,7 @@ def get_data() -> list:
                             photos.append(res)
 
                     if x == 1:
-                        news[-1].img = photos
+                        news[-1].photo = photos
                 try:
                     news[-1].text = elements[i].find_element(By.CLASS_NAME, "wall_post_text").text
                 except:
@@ -53,3 +53,5 @@ def get_data() -> list:
 
     except Exception as ex:
         print(ex)
+
+    return news
