@@ -1,7 +1,7 @@
 import threading
 from time import sleep
 
-from classes import ThreadsSaveData
+from main_threads import ThreadsSaveData
 from parsing_data import get_data, driver
 from settings import URL, DICT_FILES
 from main_shar import get_indicator
@@ -23,9 +23,7 @@ try:
     }
 
     while True:
-        # indicator.buf[0] == 1
-        if True:
-            print(1)
+        if indicator.buf[0]:
             threads_save.unique_data(get_data())
             index: int = count % 4
             if index == 0:
@@ -41,8 +39,15 @@ try:
             count += 1
             print('Обновление страницы.')
             driver.refresh()
+
+            while threads_save.threads_working():
+                sleep(0.2)
+
             print(threading.enumerate())
-            indicator.buf[0] = False
+
+            if indicator.buf[4] == 2:
+                print('Управление передано процессу process2')
+                indicator.buf[0] = False
         else:
             sleep(1)
 

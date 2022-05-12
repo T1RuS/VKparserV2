@@ -38,34 +38,37 @@ class ProcessingData:
 class ThreadsSaveData(ProcessingData):
     def _urls_save_to_file(self, data: dict) -> None:
         with self.__urls_thread_lock:
-            print(f'Сохранение в файл {URLS_FILE}')
-            self.__threads_working += 1
             with open(URLS_FILE, 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
+
             self.__threads_working -= 1
+            print(f'Сохранение в файл {URLS_FILE}')
 
     def _photos_save_to_file(self, data: dict) -> None:
         with self.__photos_thread_lock:
-            print(f'Сохранение в файл {PHOTOS_FILE}')
-            self.__threads_working += 1
             with open(PHOTOS_FILE, 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
+
             self.__threads_working -= 1
+            print(f'Сохранение в файл {PHOTOS_FILE}')
 
     def _text_save_to_file(self, data: dict) -> None:
         with self.__text_thread_lock:
-            print(f'Сохранение в файл {TEXT_FILE}')
-            self.__threads_working += 1
             with open(TEXT_FILE, 'w', encoding='utf-8') as outfile:
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
+
             self.__threads_working -= 1
+            print(f'Сохранение в файл {PHOTOS_FILE}')
 
     def _read_file(self, file_name: str) -> None:
         with self.__read_thread_lock:
-            self.__threads_working += 1
             with open(file_name, 'r', encoding='utf-8') as outfile:
-                print(f'Файл прочитан: {file_name}.')
+                data = outfile.read()
+                data = len(json.loads(data))
+                print(f'В файле {file_name} записей: {data}')
+
             self.__threads_working -= 1
+            print(f'Файл прочитан: {file_name}.')
 
     def __urls_thread_func(self) -> None:
         print(f'Поток на запись в {URLS_FILE} запущен.')
@@ -139,19 +142,23 @@ class ThreadsSaveData(ProcessingData):
     def start_save_urls(self) -> None:
         with self.__urls_thread_cond:
             self.__urls_thread_cond.notify()
+            self.__threads_working += 1
 
     def start_save_photos(self) -> None:
         with self.__photos_thread_cond:
             self.__photos_thread_cond.notify()
+            self.__threads_working += 1
 
     def start_save_text(self) -> None:
         with self.__text_thread_cond:
             self.__text_thread_cond.notify()
+            self.__threads_working += 1
 
     def start_read(self, file_name: str) -> None:
         self.file_name = file_name
         with self.__read_thread_cond:
             self.__read_thread_cond.notify()
+            self.__threads_working += 1
 
     def stop_threads(self) -> print:
         if self.__threads_started:

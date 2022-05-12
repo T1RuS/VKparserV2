@@ -10,7 +10,9 @@ def get_indicator():
         indicator.buf[1] = 1
         indicator.buf[2] = 2
         indicator.buf[3] = 3
+        indicator.buf[4] = 1
     except:
         indicator = shared_memory.SharedMemory(name=NAME_INDICATOR)
+        indicator.buf[4] += 1
 
     return indicator
