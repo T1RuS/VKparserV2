@@ -17,16 +17,24 @@ def get_data() -> list:
         elements: webdriver = driver.find_elements(By.CLASS_NAME, "feed_row ")
 
         for i in range(11):
-            if elements[i].find_element(By.TAG_NAME, "div").get_attribute("id").find('post-'):
+            count = 0
+            for j in elements[i].find_elements(By.TAG_NAME, "a"):
+                if j.text == 'Рекламная запись':
+                    count = 1
+                    break
+
+            if elements[i].find_element(By.TAG_NAME, "div").get_attribute("id").find('post-') or count == 1:
                 continue
 
             try:
                 news.append(Feed())
                 news[-1].post_id = elements[i].find_element(By.TAG_NAME, "div").get_attribute("id")
                 news[-1].url = elements[i].find_element(By.CLASS_NAME, "post_link").get_attribute("href")
-
                 try:
-                    news[-1].img = elements[i].find_element(By.CLASS_NAME, "PagePostLimitedThumb").get_attribute("src")
+                    photo = elements[i].find_element(By.CLASS_NAME, "PagePostLimitedThumb")
+                    photo = photo.get_attribute("src")
+                    news[-1].photo = photo
+
                 except:
                     imgs = elements[i].find_element(By.CLASS_NAME, "wall_text").find_elements(By.TAG_NAME, "a")
 
@@ -41,6 +49,7 @@ def get_data() -> list:
 
                     if x == 1:
                         news[-1].photo = photos
+
                 try:
                     news[-1].text = elements[i].find_element(By.CLASS_NAME, "wall_post_text").text
                 except:
@@ -49,7 +58,7 @@ def get_data() -> list:
             except:
                 pass
 
-        print(f'Новости собраны. Всего новостей:{len(news)}')
+        print(f'Новости собраны.')
 
     except Exception as ex:
         print(ex)

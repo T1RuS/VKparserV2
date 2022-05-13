@@ -58,7 +58,7 @@ class ThreadsSaveData(ProcessingData):
                 json.dump(data, outfile, indent=4, ensure_ascii=False)
 
             self.__threads_working -= 1
-            print(f'Сохранение в файл {PHOTOS_FILE}')
+            print(f'Сохранение в файл {TEXT_FILE}')
 
     def _read_file(self, file_name: str) -> None:
         with self.__read_thread_lock:

@@ -37,7 +37,7 @@ try:
                         THREADS_DICT[str(i)]()
 
             count += 1
-            print('Обновление страницы.')
+            print('Обновление страницы...')
             driver.refresh()
 
             while threads_save.threads_working():
