@@ -86,7 +86,7 @@ class ThreadsReadData:
 
     def start_threads(self) -> None:
         if self.__threads_started:
-            return print('Потоки запущены')
+            return print('Потоки уже запущены')
         print('Потоки запущены.')
         self.__threads_started = True
         self.__urls_thread.start()

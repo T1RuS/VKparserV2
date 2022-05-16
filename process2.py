@@ -15,14 +15,8 @@ threads_read = ThreadsReadData(DICT_FILES[str(indicator.buf[1])],
 threads_read.start_threads()
 print(threading.enumerate())
 
-THREADS_DICT = {
-        '0': threads_read.start_read_urls,
-        '1': threads_read.start_read_photos,
-        '2': threads_read.start_read_photos,
-    }
 
-
-def pr():
+def threads():
     threads_read.start_read_urls()
     threads_read.start_read_photos()
     threads_read.start_read_text()
@@ -30,7 +24,7 @@ def pr():
 
 while True:
     if not indicator.buf[0]:
-        Thread(target=pr).start()
+        Thread(target=threads).start()
 
         while threads_read.threads_working():
             sleep(0.2)
